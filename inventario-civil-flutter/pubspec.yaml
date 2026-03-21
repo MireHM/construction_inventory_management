@@ -1,0 +1,53 @@
+name: inventario_civil
+description: Plataforma Full Stack para la Automatización del Control de Inventario
+  y Estimación de Requerimientos en Proyectos de Construcción Urbana.
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management - BLoC
+  flutter_bloc: ^8.1.4
+  bloc: ^8.1.4
+  equatable: ^2.0.5
+
+  # HTTP / API
+  dio: ^5.4.1
+  retrofit: ^4.1.0
+
+  # Dependency Injection
+  get_it: ^7.6.7
+
+  # Navigation
+  go_router: ^13.2.1
+
+  # Secure Storage (JWT)
+  flutter_secure_storage: ^9.0.0
+
+  # UI
+  google_fonts: ^6.1.0
+  cached_network_image: ^3.3.1
+
+  # Utils
+  intl: ^0.19.0
+  logger: ^2.3.0
+  connectivity_plus: ^6.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/

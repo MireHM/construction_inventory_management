@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: inventario_civil_db
+    environment:
+      POSTGRES_DB: inventario_civil
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - inventario_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: inventario_civil_api
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: inventario_civil
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: inventarioCivilSecretKey2025UCBFullStackMireya
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - inventario_network
+
+volumes:
+  postgres_data:
+
+networks:
+  inventario_network:
+    driver: bridge
