@@ -1,6 +1,5 @@
 package com.ucb.inventariocivil.application.usecases;
 
-import com.ucb.inventariocivil.infrastructure.persistence.entities.UsuarioEntity;
 import com.ucb.inventariocivil.infrastructure.persistence.jpa.UsuarioJpaRepository;
 import com.ucb.inventariocivil.infrastructure.security.JwtTokenProvider;
 import com.ucb.inventariocivil.presentation.controllers.AuthDtos;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Caso de uso: Autenticar Usuario.
- * Capa de Aplicación – orquesta la autenticación y generación del JWT.
+ * Capa de Aplicación – orquesta la autenticación y la generación del JWT.
  */
 @Service
 public class AutenticarUsuarioUseCase {
@@ -21,33 +20,30 @@ public class AutenticarUsuarioUseCase {
     private final UsuarioJpaRepository usuarioJpaRepository;
 
     public AutenticarUsuarioUseCase(AuthenticationManager authenticationManager,
-                                     JwtTokenProvider jwtTokenProvider,
-                                     UsuarioJpaRepository usuarioJpaRepository) {
+                                    JwtTokenProvider jwtTokenProvider,
+                                    UsuarioJpaRepository usuarioJpaRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.usuarioJpaRepository = usuarioJpaRepository;
     }
 
     public AuthDtos.LoginResponse ejecutar(String email, String password) {
-        // Spring Security valida las credenciales contra la BD
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );
 
-        // Generar JWT
         String token = jwtTokenProvider.generateToken(authentication);
 
-        // Recuperar datos del usuario para la respuesta
-        UsuarioEntity usuario = usuarioJpaRepository.findByEmail(email)
-                .orElseThrow();
+        var usuario = usuarioJpaRepository.findByEmail(email).orElseThrow();
 
         String rol = usuario.getRoles().stream()
                 .findFirst()
                 .map(r -> r.getNombre())
                 .orElse("ALMACENERO");
 
-        return AuthDtos.LoginResponse.of(
+        return new AuthDtos.LoginResponse(
                 token,
+                "Bearer",
                 usuario.getId().toString(),
                 usuario.getNombre(),
                 usuario.getEmail(),

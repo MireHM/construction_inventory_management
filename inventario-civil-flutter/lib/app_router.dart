@@ -4,26 +4,21 @@ import 'package:go_router/go_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event_state.dart';
 import 'features/auth/presentation/pages/login_page.dart';
+import 'features/dashboard/presentation/pages/dashboard_page.dart';
+import 'features/materiales/presentation/bloc/material_bloc.dart';
+import 'features/materiales/presentation/pages/catalogo_materiales_page.dart';
 import 'injection_container.dart';
 
-/// Rutas de la aplicación gestionadas con GoRouter.
-/// Protege rutas privadas verificando el estado de AuthBloc.
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
-    redirect: (context, state) {
-      // La lógica de redirección se maneja en refreshListenable
-      return null;
-    },
     routes: [
       GoRoute(
         path: '/',
-        name: 'splash',
         builder: (context, state) => const _SplashPage(),
       ),
       GoRoute(
         path: '/login',
-        name: 'login',
         builder: (context, state) => BlocProvider(
           create: (_) => sl<AuthBloc>()..add(CheckAuthStatus()),
           child: const LoginPage(),
@@ -31,17 +26,27 @@ class AppRouter {
       ),
       GoRoute(
         path: '/dashboard',
-        name: 'dashboard',
-        builder: (context, state) => const _DashboardPlaceholder(),
+        builder: (context, state) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(create: (_) => sl<MaterialBloc>()),
+          ],
+          child: const DashboardPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/catalogo',
+        builder: (context, state) => BlocProvider(
+          create: (_) => sl<MaterialBloc>()..add(CargarMateriales()),
+          child: const CatalogoMaterialesPage(),
+        ),
       ),
     ],
   );
 }
 
-/// Splash que verifica la sesión antes de redirigir.
 class _SplashPage extends StatefulWidget {
   const _SplashPage();
-
   @override
   State<_SplashPage> createState() => _SplashPageState();
 }
@@ -56,7 +61,6 @@ class _SplashPageState extends State<_SplashPage> {
   Future<void> _checkSession() async {
     final authBloc = sl<AuthBloc>()..add(CheckAuthStatus());
     final state = await authBloc.stream.first;
-
     if (!mounted) return;
     if (state is AuthAuthenticated) {
       context.go('/dashboard');
@@ -68,23 +72,22 @@ class _SplashPageState extends State<_SplashPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      backgroundColor: Color(0xFF1B3A6B),
       body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-}
-
-/// Placeholder del Dashboard — se implementa en Commit 2.
-class _DashboardPlaceholder extends StatelessWidget {
-  const _DashboardPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard')),
-      body: const Center(
-        child: Text('Dashboard – Commit 2'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.warehouse_rounded, size: 64, color: Colors.white),
+            SizedBox(height: 16),
+            Text('InventarioPro',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(height: 32),
+            CircularProgressIndicator(color: Colors.white),
+          ],
+        ),
       ),
     );
   }

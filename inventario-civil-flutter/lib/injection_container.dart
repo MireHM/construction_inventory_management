@@ -4,39 +4,39 @@ import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/data/datasources/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/materiales/data/datasources/material_remote_datasource.dart';
+import 'features/materiales/data/datasources/material_repository_impl.dart';
+import 'features/materiales/domain/repositories/material_repository.dart';
+import 'features/materiales/presentation/bloc/material_bloc.dart';
 import 'core/network/api_client.dart';
 
 final sl = GetIt.instance;
 
-/// Registro de dependencias con GetIt (Service Locator).
-/// Organizado por capas siguiendo Clean Architecture:
-/// Infrastructure → Data → Domain → Presentation
 Future<void> initDependencies() async {
-  // ── INFRAESTRUCTURA ──────────────────────────────────────────────────────
   sl.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
     ),
   );
-
   sl.registerLazySingleton<ApiClient>(
     () => ApiClient(sl<FlutterSecureStorage>()),
   );
-
-  // ── DATOS ────────────────────────────────────────────────────────────────
   sl.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDatasource(sl<ApiClient>()),
   );
-
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      sl<AuthRemoteDatasource>(),
-      sl<FlutterSecureStorage>(),
-    ),
+    () => AuthRepositoryImpl(sl<AuthRemoteDatasource>(), sl<FlutterSecureStorage>()),
   );
-
-  // ── PRESENTACIÓN (BLoC) ───────────────────────────────────────────────────
   sl.registerFactory<AuthBloc>(
     () => AuthBloc(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<MaterialRemoteDatasource>(
+    () => MaterialRemoteDatasource(sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<MaterialRepository>(
+    () => MaterialRepositoryImpl(sl<MaterialRemoteDatasource>()),
+  );
+  sl.registerFactory<MaterialBloc>(
+    () => MaterialBloc(sl<MaterialRepository>()),
   );
 }
