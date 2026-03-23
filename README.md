@@ -278,13 +278,6 @@ develop    ← integración
 feature/   ← funcionalidades por historia de usuario
 ```
 
-**Historial de commits:**
-- `feat: commit 1` — Arquitectura base, JWT, entidades dominio
-- `feat: commit 2` — Auth funcional, CRUD materiales, Dashboard
-- `feat: commit 3` — Módulo inventario completo (ingresos, salidas, alertas)
-- `feat: commit 4` — APUs, proformas, motor de cálculo de requerimientos
-- `feat: commit 5` — Órdenes de compra, reportes KPIs, flujo end-to-end
-
 ---
 
 ## Equipo
