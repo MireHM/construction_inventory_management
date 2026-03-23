@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event_state.dart';
 import '../../../../core/theme/app_theme.dart';
+import 'package:go_router/go_router.dart';
 
 /// Pantalla de inicio de sesión.
 /// Coincide con el wireframe aprobado (Pantalla 1 – Login).
@@ -29,9 +30,9 @@ class _LoginPageState extends State<LoginPage> {
   void _onLogin() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(LoginRequested(
-            email: _emailCtrl.text,
-            password: _passwordCtrl.text,
-          ));
+        email: _emailCtrl.text,
+        password: _passwordCtrl.text,
+      ));
     }
   }
 
@@ -41,6 +42,9 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: AppTheme.primary,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
+          if (state is AuthAuthenticated) {
+            context.go('/dashboard');          // ← agregar esto
+          }
           if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -49,7 +53,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           }
-          // La navegación al dashboard se maneja en el router (GoRouter)
         },
         child: SafeArea(
           child: SingleChildScrollView(
@@ -203,22 +206,22 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: isLoading ? null : _onLogin,
                               child: isLoading
                                   ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
                                   : const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text('Iniciar Sesión'),
-                                        SizedBox(width: 8),
-                                        Icon(Icons.arrow_forward, size: 18),
-                                      ],
-                                    ),
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  Text('Iniciar Sesión'),
+                                  SizedBox(width: 8),
+                                  Icon(Icons.arrow_forward, size: 18),
+                                ],
+                              ),
                             );
                           },
                         ),

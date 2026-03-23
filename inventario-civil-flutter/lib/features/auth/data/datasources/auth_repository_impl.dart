@@ -1,18 +1,15 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/usuario_autenticado.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../datasources/auth_remote_datasource.dart';
+import 'auth_remote_datasource.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/errors/failures.dart';
 
-/// Implementación concreta del repositorio de autenticación.
-/// Capa de Datos – implementa el port del dominio.
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource _remoteDatasource;
-  final FlutterSecureStorage _storage;
 
-  AuthRepositoryImpl(this._remoteDatasource, this._storage);
+  AuthRepositoryImpl(this._remoteDatasource);
 
   @override
   Future<({UsuarioAutenticado? usuario, Failure? failure})> login({
@@ -24,62 +21,50 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
-
-      // Persistir token y datos de sesión de forma segura
-      await _storage.write(
-          key: AppConstants.keyAccessToken, value: model.accessToken);
-      await _storage.write(
-          key: AppConstants.keyUserEmail, value: model.email);
-      await _storage.write(
-          key: AppConstants.keyUserRol, value: model.rol);
-
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(AppConstants.keyAccessToken, model.accessToken);
+      await prefs.setString(AppConstants.keyUserEmail,   model.email);
+      await prefs.setString(AppConstants.keyUserRol,     model.rol);
+      await prefs.setString('user_nombre',               model.nombre);
       return (usuario: model.toEntity(), failure: null);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        return (
-          usuario: null,
-          failure: const UnauthorizedFailure('Credenciales incorrectas.')
-        );
+        return (usuario: null, failure: const UnauthorizedFailure('Credenciales incorrectas.'));
       }
       if (e.type == DioExceptionType.connectionError ||
           e.type == DioExceptionType.connectionTimeout) {
         return (usuario: null, failure: const NetworkFailure());
       }
-      return (
-        usuario: null,
-        failure: ServerFailure(
-          e.response?.data?['message'] ?? 'Error del servidor.',
-          statusCode: e.response?.statusCode,
-        )
-      );
+      return (usuario: null, failure: ServerFailure(
+        e.response?.data?['mensaje'] ?? 'Error del servidor.',
+        statusCode: e.response?.statusCode,
+      ));
     }
   }
 
   @override
   Future<void> logout() async {
-    await _storage.deleteAll();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 
   @override
   Future<bool> haySessionActiva() async {
-    final token = await _storage.read(key: AppConstants.keyAccessToken);
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppConstants.keyAccessToken);
     return token != null && token.isNotEmpty;
   }
 
   @override
   Future<UsuarioAutenticado?> obtenerSesionActual() async {
-    final token = await _storage.read(key: AppConstants.keyAccessToken);
-    final email = await _storage.read(key: AppConstants.keyUserEmail);
-    final rol   = await _storage.read(key: AppConstants.keyUserRol);
-
+    final prefs  = await SharedPreferences.getInstance();
+    final token  = prefs.getString(AppConstants.keyAccessToken);
+    final email  = prefs.getString(AppConstants.keyUserEmail);
+    final rol    = prefs.getString(AppConstants.keyUserRol);
+    final nombre = prefs.getString('user_nombre') ?? '';
     if (token == null || email == null || rol == null) return null;
-
     return UsuarioAutenticado(
-      id: '',
-      nombre: '',
-      email: email,
-      rol: rol,
-      accessToken: token,
+      id: '', nombre: nombre, email: email, rol: rol, accessToken: token,
     );
   }
 }

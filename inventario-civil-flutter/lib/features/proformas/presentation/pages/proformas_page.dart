@@ -28,7 +28,7 @@ class _ProformasPageState extends State<ProformasPage> {
       appBar: AppBar(
         title: const Text('Proformas por Proyecto'),
         actions: [
-          IconButton(icon: const Icon(Icons.add), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.add), onPressed: () => context.push('/proformas/${widget.proyectoId}/nueva').then((_) => context.read<ProformaBloc>().add(CargarProformas(widget.proyectoId)))),
         ],
       ),
       body: BlocBuilder<ProformaBloc, ProformaState>(
@@ -198,8 +198,8 @@ class _ProformaCardState extends State<_ProformaCard> {
                   backgroundColor: AppTheme.primary,
                 ),
                 onPressed: () {
-                  context.read<ProformaBloc>()
-                      .add(EjecutarCalculoAPU(p.id));
+                  // La pantalla de requerimientos tiene su propio ProformaBloc
+                  // No llamar EjecutarCalculoAPU aqui para no corromper el estado de esta pagina
                   context.push('/proformas/${p.id}/requerimientos');
                 },
                 icon: const Icon(Icons.calculate_outlined, size: 18),

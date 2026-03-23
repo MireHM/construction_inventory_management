@@ -19,6 +19,6 @@ class AuthRemoteDatasource {
       '/auth/login',
       data: {'email': email, 'password': password},
     );
-    return LoginResponseModel.fromJson(response.data as Map<String, dynamic>);
+    return LoginResponseModel.fromJson(response.data['data'] as Map<String, dynamic>);
   }
 }

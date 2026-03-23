@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 
 /// Entidad de dominio Material.
-/// Capa de Dominio – contiene reglas de negocio del inventario.
-class Material extends Equatable {
+/// Renombrada a MaterialItem para evitar conflicto con flutter/material.dart
+class MaterialItem extends Equatable {
   final int id;
   final String codigo;
   final String nombre;
@@ -16,7 +16,7 @@ class Material extends Equatable {
   final bool activo;
   final EstadoStock estadoStock;
 
-  const Material({
+  const MaterialItem({
     required this.id,
     required this.codigo,
     required this.nombre,
@@ -31,9 +31,9 @@ class Material extends Equatable {
     required this.estadoStock,
   });
 
-  bool get esCritico  => estadoStock == EstadoStock.critico;
-  bool get esBajo     => estadoStock == EstadoStock.bajo;
-  bool get esNormal   => estadoStock == EstadoStock.normal;
+  bool get esCritico => estadoStock == EstadoStock.critico;
+  bool get esBajo    => estadoStock == EstadoStock.bajo;
+  bool get esNormal  => estadoStock == EstadoStock.normal;
 
   @override
   List<Object?> get props => [id, codigo, nombre, stockActual, estadoStock];

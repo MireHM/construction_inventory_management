@@ -4,7 +4,7 @@ class AppConstants {
   AppConstants._();
 
   // API
-  static const String baseUrlDev = 'http://10.0.2.2:8080/api/v1';
+  static const String baseUrlDev = 'http://localhost:8080/api/v1';
   static const String baseUrlProd = 'https://inventario-civil-api.railway.app/api/v1';
 
   // Usar dev por defecto; cambiar a prod al desplegar
