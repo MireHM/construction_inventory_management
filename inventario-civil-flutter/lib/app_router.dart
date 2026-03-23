@@ -11,6 +11,9 @@ import 'features/materiales/presentation/pages/catalogo_materiales_page.dart';
 import 'features/inventario/presentation/bloc/inventario_bloc.dart';
 import 'features/inventario/presentation/pages/control_inventario_page.dart';
 import 'features/inventario/presentation/pages/registro_ingreso_page.dart';
+import 'features/proformas/presentation/bloc/proforma_bloc.dart';
+import 'features/proformas/presentation/pages/proformas_page.dart';
+import 'features/proformas/presentation/pages/resultado_requerimientos_page.dart';
 import 'injection_container.dart';
 
 class AppRouter {
@@ -59,6 +62,26 @@ class AppRouter {
           child: const RegistroIngresoPage(),
         ),
       ),
+      GoRoute(
+        path: '/proformas/:proyectoId',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['proyectoId']!);
+          return BlocProvider(
+            create: (_) => sl<ProformaBloc>(),
+            child: ProformasPage(proyectoId: id),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/proformas/:proformaId/requerimientos',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['proformaId']!);
+          return BlocProvider(
+            create: (_) => sl<ProformaBloc>(),
+            child: ResultadoRequerimientosPage(proformaId: id),
+          );
+        },
+      ),
     ],
   );
 }
@@ -67,7 +90,6 @@ class _SplashPage extends StatefulWidget {
   const _SplashPage();
   @override State<_SplashPage> createState() => _SplashPageState();
 }
-
 class _SplashPageState extends State<_SplashPage> {
   @override
   void initState() {
