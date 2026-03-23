@@ -8,6 +8,10 @@ import 'features/materiales/data/datasources/material_remote_datasource.dart';
 import 'features/materiales/data/datasources/material_repository_impl.dart';
 import 'features/materiales/domain/repositories/material_repository.dart';
 import 'features/materiales/presentation/bloc/material_bloc.dart';
+import 'features/inventario/data/datasources/inventario_remote_datasource.dart';
+import 'features/inventario/data/datasources/inventario_repository_impl.dart';
+import 'features/inventario/domain/repositories/inventario_repository.dart';
+import 'features/inventario/presentation/bloc/inventario_bloc.dart';
 import 'core/network/api_client.dart';
 
 final sl = GetIt.instance;
@@ -21,15 +25,15 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<ApiClient>(
     () => ApiClient(sl<FlutterSecureStorage>()),
   );
+  // Auth
   sl.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDatasource(sl<ApiClient>()),
   );
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(sl<AuthRemoteDatasource>(), sl<FlutterSecureStorage>()),
   );
-  sl.registerFactory<AuthBloc>(
-    () => AuthBloc(sl<AuthRepository>()),
-  );
+  sl.registerFactory<AuthBloc>(() => AuthBloc(sl<AuthRepository>()));
+  // Materiales
   sl.registerLazySingleton<MaterialRemoteDatasource>(
     () => MaterialRemoteDatasource(sl<ApiClient>()),
   );
@@ -38,5 +42,15 @@ Future<void> initDependencies() async {
   );
   sl.registerFactory<MaterialBloc>(
     () => MaterialBloc(sl<MaterialRepository>()),
+  );
+  // Inventario
+  sl.registerLazySingleton<InventarioRemoteDatasource>(
+    () => InventarioRemoteDatasource(sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<InventarioRepository>(
+    () => InventarioRepositoryImpl(sl<InventarioRemoteDatasource>()),
+  );
+  sl.registerFactory<InventarioBloc>(
+    () => InventarioBloc(sl<InventarioRepository>()),
   );
 }
