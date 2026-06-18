@@ -15,9 +15,16 @@ class CatalogoMaterialesPage extends StatelessWidget {
       backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text('Catálogo de Materiales'),
-        actions: [IconButton(icon: const Icon(Icons.settings_outlined), onPressed: () {})],
+        backgroundColor: AppTheme.primary,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => context.read<MaterialBloc>().add(CargarMateriales()),
+          ),
+        ],
       ),
-      body: Column(children: [_SearchBar(), Expanded(child: _MaterialList())]),
+      body: Column(children: [const _SearchBar(), Expanded(child: _MaterialList())]),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppTheme.primary,
         onPressed: () => context.push('/materiales/nuevo'),
@@ -27,27 +34,85 @@ class CatalogoMaterialesPage extends StatelessWidget {
   }
 }
 
-class _SearchBar extends StatelessWidget {
+class _SearchBar extends StatefulWidget {
+  const _SearchBar();
+  @override
+  State<_SearchBar> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<_SearchBar> {
+  int? _categoriaSeleccionada;
+  String _query = '';
+
+  static const _categorias = [
+    (id: 1, nombre: 'Áridos y Pétreos'),
+    (id: 2, nombre: 'Cementos'),
+    (id: 3, nombre: 'Acero'),
+    (id: 4, nombre: 'Maderas'),
+    (id: 5, nombre: 'Eléctrica'),
+    (id: 6, nombre: 'Pinturas'),
+    (id: 7, nombre: 'Sanitaria'),
+    (id: 8, nombre: 'Mampostería'),
+  ];
+
+  void _buscar() {
+    context.read<MaterialBloc>().add(BuscarConFiltros(
+      q: _query.isEmpty ? null : _query,
+      categoriaId: _categoriaSeleccionada,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Row(children: [
-        Expanded(child: TextField(
-          onChanged: (v) => context.read<MaterialBloc>().add(BuscarMaterial(v)),
-          decoration: InputDecoration(
-            hintText: 'Buscar material...', prefixIcon: const Icon(Icons.search),
-            filled: true, fillColor: Colors.white,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+      child: Column(children: [
+        Row(children: [
+          Expanded(child: TextField(
+            onChanged: (v) { _query = v; _buscar(); },
+            decoration: InputDecoration(
+              hintText: 'Buscar por nombre o código...',
+              prefixIcon: const Icon(Icons.search),
+              filled: true, fillColor: Colors.white,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+              contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          )),
+          const SizedBox(width: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: _categoriaSeleccionada != null ? AppTheme.primary : Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: PopupMenuButton<int?>(
+              icon: Icon(Icons.filter_list,
+                  color: _categoriaSeleccionada != null ? Colors.white : AppTheme.textPrimary),
+              tooltip: 'Filtrar por categoría',
+              onSelected: (v) {
+                setState(() => _categoriaSeleccionada = v);
+                _buscar();
+              },
+              itemBuilder: (_) => [
+                const PopupMenuItem(value: null, child: Text('Todas las categorías')),
+                ..._categorias.map((c) => PopupMenuItem(value: c.id, child: Text(c.nombre))),
+              ],
+            ),
           ),
-        )),
-        const SizedBox(width: 8),
-        Container(
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFFE2E8F0))),
-          child: IconButton(icon: const Icon(Icons.filter_list), onPressed: () {}),
-        ),
+        ]),
+        if (_categoriaSeleccionada != null) ...[
+          const SizedBox(height: 8),
+          Row(children: [
+            Chip(
+              label: Text(_categorias.firstWhere((c) => c.id == _categoriaSeleccionada).nombre,
+                  style: const TextStyle(color: Colors.white, fontSize: 12)),
+              backgroundColor: AppTheme.primary,
+              deleteIcon: const Icon(Icons.close, size: 16, color: Colors.white),
+              onDeleted: () { setState(() => _categoriaSeleccionada = null); _buscar(); },
+            ),
+          ]),
+        ],
       ]),
     );
   }

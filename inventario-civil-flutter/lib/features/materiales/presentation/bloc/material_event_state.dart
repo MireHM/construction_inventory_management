@@ -16,6 +16,17 @@ class BuscarMaterial   extends MaterialEvent {
   const BuscarMaterial(this.query);
   @override List<Object?> get props => [query];
 }
+class FiltrarPorCategoria extends MaterialEvent {
+  final int? categoriaId;
+  const FiltrarPorCategoria(this.categoriaId);
+  @override List<Object?> get props => [categoriaId];
+}
+class BuscarConFiltros extends MaterialEvent {
+  final String? q;
+  final int? categoriaId;
+  const BuscarConFiltros({this.q, this.categoriaId});
+  @override List<Object?> get props => [q, categoriaId];
+}
 
 // ── STATES ───────────────────────────────────────────────────────────────────
 // Renombrado a MatBlocState para evitar conflicto con MaterialState de Flutter
