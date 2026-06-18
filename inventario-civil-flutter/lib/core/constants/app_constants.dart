@@ -1,14 +1,15 @@
 /// Constantes globales de la aplicación.
-/// URL base apunta a localhost en desarrollo y a Railway en producción.
+/// URL base se selecciona según el entorno (--dart-define=ENV=prod para producción).
 class AppConstants {
   AppConstants._();
 
   // API
-  static const String baseUrlDev = 'http://localhost:8080/api/v1';
-  static const String baseUrlProd = 'https://inventario-civil-api.railway.app/api/v1';
+  static const String baseUrlDev  = 'http://localhost:8080/api/v1';
+  static const String baseUrlProd = 'https://inventario-civil-api.onrender.com/api/v1';
 
-  // Usar dev por defecto; cambiar a prod al desplegar
-  static const String baseUrl = baseUrlDev;
+  // Lee el entorno desde dart-define: flutter build web --dart-define=ENV=prod
+  static const String _env = String.fromEnvironment('ENV', defaultValue: 'dev');
+  static const String baseUrl = _env == 'prod' ? baseUrlProd : baseUrlDev;
 
   // Storage keys
   static const String keyAccessToken  = 'access_token';
