@@ -37,9 +37,15 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        seedCategorias(); seedUnidadesMedida();
-        seedRoles(); seedAdminUser(); seedMateriales(); seedApus();
-        seedProyectos(); seedProveedores();
+        try {
+            seedCategorias(); seedUnidadesMedida();
+            seedRoles(); seedAdminUser(); seedMateriales(); seedApus();
+            seedProyectos(); seedProveedores();
+        } catch (Exception e) {
+            // El seed de demo falló parcialmente — la app sigue funcionando
+            // (roles y admin ya están garantizados por la migración V4)
+            System.err.println("⚠️  DataSeeder parcial: " + e.getMessage());
+        }
     }
 
     private void seedCategorias() {
@@ -88,6 +94,7 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedRoles() {
+        if (rolRepository.count() > 0) return; // V4 migration ya los insertó
         List.of("ADMINISTRADOR","ALMACENERO","RESIDENTE","GERENTE").forEach(n -> {
             if (!rolRepository.existsByNombre(n)) {
                 RolEntity r = new RolEntity(); r.setNombre(n); r.setDescripcion("Rol "+n);
