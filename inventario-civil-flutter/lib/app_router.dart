@@ -23,6 +23,10 @@ import 'features/ordenes/presentation/bloc/orden_bloc.dart';
 import 'features/ordenes/presentation/pages/ordenes_page.dart';
 import 'features/reportes/presentation/pages/reporte_stock_page.dart';
 import 'features/usuarios/presentation/pages/usuarios_page.dart';
+import 'features/proyectos/presentation/pages/proyectos_page.dart';
+import 'features/proveedores/presentation/pages/proveedores_page.dart';
+import 'features/catalogo/presentation/pages/categorias_page.dart';
+import 'features/catalogo/presentation/pages/unidades_medida_page.dart';
 import 'injection_container.dart';
 
 class AppRouter {
@@ -99,6 +103,18 @@ class AppRouter {
 
       GoRoute(path: '/usuarios',
           builder: (c, s) => const UsuariosPage()),
+
+      GoRoute(path: '/proyectos',
+          builder: (c, s) => const ProyectosPage()),
+
+      GoRoute(path: '/proveedores',
+          builder: (c, s) => const ProveedoresPage()),
+
+      GoRoute(path: '/categorias',
+          builder: (c, s) => const CategoriasPage()),
+
+      GoRoute(path: '/unidades-medida',
+          builder: (c, s) => const UnidadesMedidaPage()),
     ],
   );
 }

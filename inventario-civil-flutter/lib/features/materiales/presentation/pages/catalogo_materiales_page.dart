@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../bloc/material_bloc.dart';
 import '../bloc/material_event_state.dart';
 import '../../domain/entities/material.dart';
+import '../../../../core/network/api_client.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../injection_container.dart';
 
 class CatalogoMaterialesPage extends StatelessWidget {
   const CatalogoMaterialesPage({super.key});
@@ -42,18 +44,28 @@ class _SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<_SearchBar> {
   int? _categoriaSeleccionada;
+  String _categoriaSeleccionadaNombre = '';
   String _query = '';
+  List<Map<String, dynamic>> _categorias = [];
 
-  static const _categorias = [
-    (id: 1, nombre: 'Áridos y Pétreos'),
-    (id: 2, nombre: 'Cementos'),
-    (id: 3, nombre: 'Acero'),
-    (id: 4, nombre: 'Maderas'),
-    (id: 5, nombre: 'Eléctrica'),
-    (id: 6, nombre: 'Pinturas'),
-    (id: 7, nombre: 'Sanitaria'),
-    (id: 8, nombre: 'Mampostería'),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _cargarCategorias();
+  }
+
+  Future<void> _cargarCategorias() async {
+    try {
+      final res = await sl<ApiClient>().dio.get('/api/v1/categorias');
+      if (mounted) {
+        setState(() {
+          _categorias = ((res.data['data'] as List?) ?? [])
+              .map((e) => e as Map<String, dynamic>)
+              .toList();
+        });
+      }
+    } catch (_) {}
+  }
 
   void _buscar() {
     context.read<MaterialBloc>().add(BuscarConFiltros(
@@ -91,12 +103,18 @@ class _SearchBarState extends State<_SearchBar> {
                   color: _categoriaSeleccionada != null ? Colors.white : AppTheme.textPrimary),
               tooltip: 'Filtrar por categoría',
               onSelected: (v) {
-                setState(() => _categoriaSeleccionada = v);
+                setState(() {
+                  _categoriaSeleccionada = v;
+                  _categoriaSeleccionadaNombre = v == null ? '' :
+                      (_categorias.firstWhere((c) => c['id'] == v,
+                          orElse: () => {'nombre': ''})['nombre'] as String);
+                });
                 _buscar();
               },
               itemBuilder: (_) => [
                 const PopupMenuItem(value: null, child: Text('Todas las categorías')),
-                ..._categorias.map((c) => PopupMenuItem(value: c.id, child: Text(c.nombre))),
+                ..._categorias.map((c) =>
+                    PopupMenuItem(value: c['id'] as int, child: Text(c['nombre'] as String))),
               ],
             ),
           ),
@@ -105,11 +123,14 @@ class _SearchBarState extends State<_SearchBar> {
           const SizedBox(height: 8),
           Row(children: [
             Chip(
-              label: Text(_categorias.firstWhere((c) => c.id == _categoriaSeleccionada).nombre,
+              label: Text(_categoriaSeleccionadaNombre,
                   style: const TextStyle(color: Colors.white, fontSize: 12)),
               backgroundColor: AppTheme.primary,
               deleteIcon: const Icon(Icons.close, size: 16, color: Colors.white),
-              onDeleted: () { setState(() => _categoriaSeleccionada = null); _buscar(); },
+              onDeleted: () {
+                setState(() { _categoriaSeleccionada = null; _categoriaSeleccionadaNombre = ''; });
+                _buscar();
+              },
             ),
           ]),
         ],
