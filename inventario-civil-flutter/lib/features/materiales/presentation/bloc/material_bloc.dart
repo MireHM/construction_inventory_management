@@ -8,6 +8,8 @@ class MaterialBloc extends Bloc<MaterialEvent, MatBlocState> {
   MaterialBloc(this._repository) : super(MaterialInitial()) {
     on<CargarMateriales>(_onCargar);
     on<BuscarMaterial>(_onBuscar);
+    on<BuscarConFiltros>(_onBuscarConFiltros);
+    on<FiltrarPorCategoria>(_onFiltrarCategoria);
   }
 
   Future<void> _onCargar(CargarMateriales event, Emitter<MatBlocState> emit) async {
@@ -31,5 +33,19 @@ class MaterialBloc extends Bloc<MaterialEvent, MatBlocState> {
           .toList();
       emit(MaterialesLoaded.conFiltro(todos, filtrados));
     }
+  }
+
+  Future<void> _onBuscarConFiltros(BuscarConFiltros event, Emitter<MatBlocState> emit) async {
+    emit(MaterialLoading());
+    final result = await _repository.buscar(q: event.q, categoriaId: event.categoriaId);
+    if (result.failure != null) {
+      emit(MaterialError(result.failure!));
+    } else {
+      emit(MaterialesLoaded(result.materiales!));
+    }
+  }
+
+  void _onFiltrarCategoria(FiltrarPorCategoria event, Emitter<MatBlocState> emit) {
+    add(BuscarConFiltros(categoriaId: event.categoriaId));
   }
 }

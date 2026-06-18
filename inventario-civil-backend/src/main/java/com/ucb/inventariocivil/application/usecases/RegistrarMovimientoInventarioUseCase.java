@@ -94,6 +94,13 @@ public class RegistrarMovimientoInventarioUseCase {
     }
 
     @Transactional(readOnly = true)
+    public List<MovimientoInventarioEntity> historialPorProyecto(Long proyectoId) {
+        return movimientoRepository
+                .findByProyectoIdOrderByFechaMovimientoDesc(proyectoId, PageRequest.of(0, 500))
+                .getContent();
+    }
+
+    @Transactional(readOnly = true)
     public List<MovimientoInventarioEntity> ultimos(int cantidad) {
         return movimientoRepository.findUltimos(PageRequest.of(0, cantidad));
     }
