@@ -22,6 +22,7 @@ import 'features/proformas/presentation/pages/crear_proforma_page.dart';
 import 'features/ordenes/presentation/bloc/orden_bloc.dart';
 import 'features/ordenes/presentation/pages/ordenes_page.dart';
 import 'features/reportes/presentation/pages/reporte_stock_page.dart';
+import 'features/usuarios/presentation/pages/usuarios_page.dart';
 import 'injection_container.dart';
 
 class AppRouter {
@@ -95,6 +96,9 @@ class AppRouter {
       GoRoute(path: '/ordenes',
           builder: (c, s) => BlocProvider(
               create: (_) => sl<OrdenBloc>(), child: const OrdenesPage())),
+
+      GoRoute(path: '/usuarios',
+          builder: (c, s) => const UsuariosPage()),
     ],
   );
 }

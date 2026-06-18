@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -16,18 +17,24 @@ public class DataSeeder implements CommandLineRunner {
     private final UsuarioJpaRepository  usuarioRepository;
     private final MaterialJpaRepository materialRepository;
     private final ApuJpaRepository      apuRepository;
+    private final ProyectoJpaRepository proyectoRepository;
+    private final ProveedorJpaRepository proveedorRepository;
     private final PasswordEncoder       passwordEncoder;
 
     public DataSeeder(RolJpaRepository r, UsuarioJpaRepository u,
                       MaterialJpaRepository m, ApuJpaRepository a,
+                      ProyectoJpaRepository pr, ProveedorJpaRepository pv,
                       PasswordEncoder p) {
         rolRepository = r; usuarioRepository = u;
-        materialRepository = m; apuRepository = a; passwordEncoder = p;
+        materialRepository = m; apuRepository = a;
+        proyectoRepository = pr; proveedorRepository = pv;
+        passwordEncoder = p;
     }
 
     @Override
     public void run(String... args) {
         seedRoles(); seedAdminUser(); seedMateriales(); seedApus();
+        seedProyectos(); seedProveedores();
     }
 
     private void seedRoles() {
@@ -99,6 +106,57 @@ public class DataSeeder implements CommandLineRunner {
             new String[]{"55.0","0.22","0.04"},
             new String[]{"5.00","5.00","3.00"});
         System.out.println("✅ APUs creados.");
+    }
+
+    private void seedProyectos() {
+        if (proyectoRepository.count() > 0) return;
+        Object[][] proyectos = {
+            {"PROY-001","Edificio Central UCB","Construcción edificio 5 pisos","EN_EJECUCION",
+             "2025-01-15","2026-12-31",1L,2500000.00},
+            {"PROY-002","Puente Río Choqueyapu","Puente peatonal 30m","PLANIFICACION",
+             "2026-03-01","2027-06-30",1L,800000.00},
+            {"PROY-003","Pavimentación Av. Brasil","Repavimentación 2km","PLANIFICACION",
+             "2026-07-01","2027-01-31",1L,450000.00},
+        };
+        for (Object[] p : proyectos) {
+            if (!proyectoRepository.existsByCodigo((String)p[0])) {
+                ProyectoEntity proyecto = new ProyectoEntity();
+                proyecto.setCodigo((String)p[0]);
+                proyecto.setNombre((String)p[1]);
+                proyecto.setDescripcion((String)p[2]);
+                proyecto.setEstado((String)p[3]);
+                proyecto.setFechaInicio(LocalDate.parse((String)p[4]));
+                proyecto.setFechaFinEstimada(LocalDate.parse((String)p[5]));
+                proyecto.setResponsableId((Long)p[6]);
+                proyecto.setPresupuesto(BigDecimal.valueOf((Double)p[7]));
+                proyecto.setActivo(true);
+                proyectoRepository.save(proyecto);
+            }
+        }
+        System.out.println("✅ Proyectos creados.");
+    }
+
+    private void seedProveedores() {
+        if (proveedorRepository.count() > 0) return;
+        Object[][] proveedores = {
+            {"SOBOCE S.A.","1234567","76543210","ventas@soboce.com","Av. Arce 2631, La Paz","Juan Pérez"},
+            {"VIABOL Constructora","2345678","75432109","info@viabol.com","Calle 21 de Calacoto 789, La Paz","María López"},
+            {"FERRETERÍA EL CONSTRUCTOR","3456789","74321098","ferretero@gmail.com","Mercado Rodríguez, La Paz","Carlos Mamani"},
+        };
+        for (Object[] pv : proveedores) {
+            if (!proveedorRepository.existsByNit((String)pv[1])) {
+                ProveedorEntity proveedor = new ProveedorEntity();
+                proveedor.setNombre((String)pv[0]);
+                proveedor.setNit((String)pv[1]);
+                proveedor.setTelefono((String)pv[2]);
+                proveedor.setEmail((String)pv[3]);
+                proveedor.setDireccion((String)pv[4]);
+                proveedor.setContacto((String)pv[5]);
+                proveedor.setActivo(true);
+                proveedorRepository.save(proveedor);
+            }
+        }
+        System.out.println("✅ Proveedores creados.");
     }
 
     private void saveApu(String codigo, String nombre, String desc, String unidad,
