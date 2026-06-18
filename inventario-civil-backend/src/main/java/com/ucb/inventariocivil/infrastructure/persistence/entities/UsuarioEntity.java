@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.LinkedHashSet;
 
 /**
  * Entidad JPA de Usuario.
@@ -39,6 +40,14 @@ public class UsuarioEntity {
         inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
     private Set<RolEntity> roles = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "usuario_proyectos",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "proyecto_id")
+    )
+    private Set<ProyectoEntity> proyectos = new LinkedHashSet<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -78,6 +87,9 @@ public class UsuarioEntity {
 
     public Set<RolEntity> getRoles() { return roles; }
     public void setRoles(Set<RolEntity> roles) { this.roles = roles; }
+
+    public Set<ProyectoEntity> getProyectos() { return proyectos; }
+    public void setProyectos(Set<ProyectoEntity> proyectos) { this.proyectos = proyectos; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
