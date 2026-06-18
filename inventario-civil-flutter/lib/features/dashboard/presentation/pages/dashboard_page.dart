@@ -111,6 +111,40 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
+      drawer: Drawer(child: ListView(padding: EdgeInsets.zero, children: [
+        DrawerHeader(
+          decoration: const BoxDecoration(color: AppTheme.primary),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.end, children: [
+            const Icon(Icons.warehouse_rounded, size: 36, color: Colors.white),
+            const SizedBox(height: 8),
+            const Text('InventarioPro', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(nombre, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+          ]),
+        ),
+        _DrawerItem(Icons.home_outlined, 'Inicio', () => context.pop()),
+        _DrawerItem(Icons.inventory_2_outlined, 'Catálogo de Materiales', () { context.pop(); context.push('/catalogo'); }),
+        _DrawerItem(Icons.bar_chart_outlined, 'Control de Inventario', () { context.pop(); context.push('/inventario'); }),
+        _DrawerItem(Icons.history, 'Historial de Movimientos', () { context.pop(); context.push('/historial'); }),
+        _DrawerItem(Icons.notifications_outlined, 'Alertas de Stock', () { context.pop(); context.push('/alertas'); }),
+        _DrawerItem(Icons.receipt_long_outlined, 'Órdenes de Compra', () { context.pop(); context.push('/ordenes'); }),
+        _DrawerItem(Icons.calculate_outlined, 'Proformas / APU', () { context.pop(); context.push('/proformas/1'); }),
+        _DrawerItem(Icons.assessment_outlined, 'Reporte de Stock', () { context.pop(); context.push('/reportes/stock'); }),
+        const Divider(),
+        _DrawerItem(Icons.folder_outlined, 'Proyectos', () { context.pop(); context.push('/proyectos'); }),
+        _DrawerItem(Icons.store_outlined, 'Proveedores', () { context.pop(); context.push('/proveedores'); }),
+        _DrawerItem(Icons.category_outlined, 'Categorías', () { context.pop(); context.push('/categorias'); }),
+        _DrawerItem(Icons.straighten_outlined, 'Unidades de Medida', () { context.pop(); context.push('/unidades-medida'); }),
+        _DrawerItem(Icons.people_outlined, 'Usuarios', () { context.pop(); context.push('/usuarios'); }),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.logout, color: AppTheme.error),
+          title: const Text('Cerrar sesión', style: TextStyle(color: AppTheme.error)),
+          onTap: () {
+            context.read<AuthBloc>().add(LogoutRequested());
+            context.go('/login');
+          },
+        ),
+      ])),
       body: RefreshIndicator(
         onRefresh: () async { context.read<MaterialBloc>().add(CargarMateriales()); await _cargarKpis(); },
         child: SingleChildScrollView(
@@ -249,4 +283,18 @@ class _AccesoRapido extends StatelessWidget {
       Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color)),
     ]),
   )));
+}
+
+class _DrawerItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  const _DrawerItem(this.icon, this.label, this.onTap);
+  @override
+  Widget build(BuildContext context) => ListTile(
+    leading: Icon(icon, color: AppTheme.primary, size: 22),
+    title: Text(label, style: const TextStyle(fontSize: 14)),
+    onTap: onTap,
+    dense: true,
+  );
 }
