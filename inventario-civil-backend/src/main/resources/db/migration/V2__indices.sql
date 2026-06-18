@@ -19,7 +19,7 @@ CREATE INDEX IF NOT EXISTS idx_alertas_material       ON alertas_stock(material_
 -- Órdenes de compra: estado y proveedor
 CREATE INDEX IF NOT EXISTS idx_ordenes_estado         ON ordenes_compra(estado);
 CREATE INDEX IF NOT EXISTS idx_ordenes_proveedor      ON ordenes_compra(proveedor_id);
-CREATE INDEX IF NOT EXISTS idx_ordenes_proforma       ON ordenes_compra(proforma_id);
+CREATE INDEX IF NOT EXISTS idx_ordenes_requerimiento  ON ordenes_compra(requerimiento_id);
 
 -- Usuarios: búsqueda por email (login)
 CREATE INDEX IF NOT EXISTS idx_usuarios_email         ON usuarios(email);
