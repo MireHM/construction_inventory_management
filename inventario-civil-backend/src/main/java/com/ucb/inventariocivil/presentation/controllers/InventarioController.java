@@ -158,6 +158,15 @@ public class InventarioController {
         return ResponseEntity.ok(AuthDtos.ApiResponse.ok("OK", lista));
     }
 
+    @Operation(summary = "Movimientos filtrados por proyecto")
+    @GetMapping("/proyectos/{proyectoId}/movimientos")
+    public ResponseEntity<AuthDtos.ApiResponse<List<MovimientoResponse>>> porProyecto(
+            @PathVariable Long proyectoId) {
+        List<MovimientoResponse> lista = useCase.historialPorProyecto(proyectoId)
+                .stream().map(MovimientoResponse::from).toList();
+        return ResponseEntity.ok(AuthDtos.ApiResponse.ok("OK", lista));
+    }
+
     @Operation(summary = "Alertas de stock pendientes")
     @GetMapping("/alertas")
     public ResponseEntity<AuthDtos.ApiResponse<List<AlertaResponse>>> alertas() {

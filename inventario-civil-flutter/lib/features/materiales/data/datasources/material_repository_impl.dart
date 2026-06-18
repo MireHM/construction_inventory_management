@@ -31,6 +31,14 @@ class MaterialRepositoryImpl implements MaterialRepository {
     } on DioException catch (e) { return (material: null, failure: _map(e)); }
   }
 
+  @override
+  Future<({List<MaterialItem>? materiales, Failure? failure})> buscar({String? q, int? categoriaId}) async {
+    try {
+      final models = await _datasource.buscar(q: q, categoriaId: categoriaId);
+      return (materiales: models.map((m) => m.toEntity()).toList(), failure: null);
+    } on DioException catch (e) { return (materiales: null, failure: _map(e)); }
+  }
+
   Failure _map(DioException e) {
     if (e.type == DioExceptionType.connectionError) return const NetworkFailure();
     final msg = e.response?.data?['mensaje'] ?? 'Error del servidor.';

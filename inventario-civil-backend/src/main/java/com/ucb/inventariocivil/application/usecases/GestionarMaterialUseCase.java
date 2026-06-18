@@ -3,6 +3,9 @@ package com.ucb.inventariocivil.application.usecases;
 import com.ucb.inventariocivil.domain.exceptions.RecursoNoEncontradoException;
 import com.ucb.inventariocivil.infrastructure.persistence.entities.MaterialEntity;
 import com.ucb.inventariocivil.infrastructure.persistence.jpa.MaterialJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +38,19 @@ public class GestionarMaterialUseCase {
     @Transactional(readOnly = true)
     public List<MaterialEntity> listarBajoStockMinimo() {
         return materialRepository.findMaterialesBajoStockMinimo();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MaterialEntity> buscar(String q, Long categoriaId, int page, int size) {
+        String query = (q != null && !q.isBlank()) ? q.trim() : null;
+        return materialRepository.buscar(query, categoriaId,
+                PageRequest.of(page, size, Sort.by("nombre").ascending()));
+    }
+
+    @Transactional(readOnly = true)
+    public List<MaterialEntity> buscarTodos(String q, Long categoriaId) {
+        String query = (q != null && !q.isBlank()) ? q.trim() : null;
+        return materialRepository.buscarSinPaginacion(query, categoriaId);
     }
 
     @Transactional

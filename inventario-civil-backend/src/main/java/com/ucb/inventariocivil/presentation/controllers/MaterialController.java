@@ -14,8 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Page;
+
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller REST de Materiales.
@@ -99,6 +102,24 @@ public class MaterialController {
             @PathVariable Long id) {
         return ResponseEntity.ok(
                 AuthDtos.ApiResponse.ok("OK", MaterialResponse.from(useCase.obtenerPorId(id))));
+    }
+
+    @Operation(summary = "Buscar materiales con filtros y paginación")
+    @GetMapping("/buscar")
+    public ResponseEntity<AuthDtos.ApiResponse<Map<String, Object>>> buscar(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Long categoriaId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Page<MaterialEntity> resultado = useCase.buscar(q, categoriaId, page, size);
+        Map<String, Object> data = Map.of(
+                "content", resultado.getContent().stream().map(MaterialResponse::from).toList(),
+                "totalElements", resultado.getTotalElements(),
+                "totalPages", resultado.getTotalPages(),
+                "page", resultado.getNumber(),
+                "size", resultado.getSize()
+        );
+        return ResponseEntity.ok(AuthDtos.ApiResponse.ok("OK", data));
     }
 
     @Operation(summary = "Materiales con stock bajo el mínimo (alertas)")

@@ -13,28 +13,78 @@ import java.util.Set;
 @Component
 public class DataSeeder implements CommandLineRunner {
 
-    private final RolJpaRepository      rolRepository;
-    private final UsuarioJpaRepository  usuarioRepository;
-    private final MaterialJpaRepository materialRepository;
-    private final ApuJpaRepository      apuRepository;
-    private final ProyectoJpaRepository proyectoRepository;
-    private final ProveedorJpaRepository proveedorRepository;
-    private final PasswordEncoder       passwordEncoder;
+    private final RolJpaRepository        rolRepository;
+    private final UsuarioJpaRepository    usuarioRepository;
+    private final MaterialJpaRepository   materialRepository;
+    private final ApuJpaRepository        apuRepository;
+    private final ProyectoJpaRepository   proyectoRepository;
+    private final ProveedorJpaRepository  proveedorRepository;
+    private final CategoriaJpaRepository  categoriaRepository;
+    private final UnidadMedidaJpaRepository unidadMedidaRepository;
+    private final PasswordEncoder         passwordEncoder;
 
     public DataSeeder(RolJpaRepository r, UsuarioJpaRepository u,
                       MaterialJpaRepository m, ApuJpaRepository a,
                       ProyectoJpaRepository pr, ProveedorJpaRepository pv,
+                      CategoriaJpaRepository cat, UnidadMedidaJpaRepository um,
                       PasswordEncoder p) {
         rolRepository = r; usuarioRepository = u;
         materialRepository = m; apuRepository = a;
         proyectoRepository = pr; proveedorRepository = pv;
+        categoriaRepository = cat; unidadMedidaRepository = um;
         passwordEncoder = p;
     }
 
     @Override
     public void run(String... args) {
+        seedCategorias(); seedUnidadesMedida();
         seedRoles(); seedAdminUser(); seedMateriales(); seedApus();
         seedProyectos(); seedProveedores();
+    }
+
+    private void seedCategorias() {
+        if (categoriaRepository.count() > 0) return;
+        String[][] cats = {
+            {"Áridos y Pétreos","Arena, grava, piedra y materiales granulares"},
+            {"Cementos y Conglomerantes","Cemento, cal, yeso"},
+            {"Acero y Fierro","Varillas, perfiles, mallas de acero"},
+            {"Maderas y Carpintería","Tablones, vigas, encofrados de madera"},
+            {"Instalaciones Eléctricas","Cables, tuberías, accesorios eléctricos"},
+            {"Pinturas y Revestimientos","Pinturas, selladores, barnices"},
+            {"Instalaciones Sanitarias","Tuberías, válvulas, sanitarios"},
+            {"Cerámicos y Mampostería","Ladrillos, bloques, cerámicos"},
+        };
+        for (String[] c : cats) {
+            if (!categoriaRepository.existsByNombre(c[0])) {
+                CategoriaEntity cat = new CategoriaEntity();
+                cat.setNombre(c[0]); cat.setDescripcion(c[1]);
+                categoriaRepository.save(cat);
+            }
+        }
+        System.out.println("✅ Categorías creadas.");
+    }
+
+    private void seedUnidadesMedida() {
+        if (unidadMedidaRepository.count() > 0) return;
+        String[][] ums = {
+            {"barra","Barra"},
+            {"kg","Kilogramo"},
+            {"m3","Metro cúbico"},
+            {"m2","Metro cuadrado"},
+            {"pza","Pieza"},
+            {"ml","Metro lineal"},
+            {"litro","Litro"},
+            {"bolsa","Bolsa"},
+            {"galón","Galón"},
+        };
+        for (String[] u : ums) {
+            if (!unidadMedidaRepository.existsBySimbolo(u[0])) {
+                UnidadMedidaEntity um = new UnidadMedidaEntity();
+                um.setSimbolo(u[0]); um.setNombre(u[1]);
+                unidadMedidaRepository.save(um);
+            }
+        }
+        System.out.println("✅ Unidades de medida creadas.");
     }
 
     private void seedRoles() {

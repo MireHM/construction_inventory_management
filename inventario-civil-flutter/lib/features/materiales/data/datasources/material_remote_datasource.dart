@@ -21,4 +21,13 @@ class MaterialRemoteDatasource {
     final res = await _apiClient.dio.get('/materiales/$id');
     return MaterialModel.fromJson(res.data['data'] as Map<String, dynamic>);
   }
+
+  Future<List<MaterialModel>> buscar({String? q, int? categoriaId, int page = 0, int size = 50}) async {
+    final params = <String, dynamic>{'page': page, 'size': size};
+    if (q != null && q.isNotEmpty) params['q'] = q;
+    if (categoriaId != null) params['categoriaId'] = categoriaId;
+    final res = await _apiClient.dio.get('/materiales/buscar', queryParameters: params);
+    final List content = res.data['data']['content'] as List;
+    return content.map((e) => MaterialModel.fromJson(e as Map<String, dynamic>)).toList();
+  }
 }
