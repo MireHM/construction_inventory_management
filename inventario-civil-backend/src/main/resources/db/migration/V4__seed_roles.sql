@@ -15,12 +15,14 @@ ON CONFLICT (nombre) DO NOTHING;
 
 -- Insertar usuario administrador inicial
 -- Password: Admin2025#  (bcrypt strength=12)
-INSERT INTO usuarios (nombre, email, password_hash, activo)
+INSERT INTO usuarios (nombre, email, password_hash, activo, created_at, updated_at)
 VALUES (
   'Administrador del Sistema',
   'admin@inventariocivil.bo',
   '$2a$12$ach7uWNbJ0WPbUlEkN10zuDQQ9mNxeVMnO2aG03wuYkRwDu8Gw/OC',
-  true
+  true,
+  NOW(),
+  NOW()
 )
 ON CONFLICT (email) DO NOTHING;
 

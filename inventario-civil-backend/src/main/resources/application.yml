@@ -12,12 +12,12 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
   flyway:
@@ -32,6 +32,8 @@ spring:
     time-zone: America/La_Paz
 
 app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://startling-smakager-31f2de.netlify.app,http://localhost:3000,http://localhost:8080}
   jwt:
     secret: ${JWT_SECRET:inventarioCivilSecretKey2025UCBFullStackMireya}
     expiration-ms: 86400000       # 24 horas
