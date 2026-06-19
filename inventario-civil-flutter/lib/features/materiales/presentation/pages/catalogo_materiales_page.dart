@@ -56,7 +56,7 @@ class _SearchBarState extends State<_SearchBar> {
 
   Future<void> _cargarCategorias() async {
     try {
-      final res = await sl<ApiClient>().dio.get('/api/v1/categorias');
+      final res = await sl<ApiClient>().dio.get('/categorias');
       if (mounted) {
         setState(() {
           _categorias = ((res.data['data'] as List?) ?? [])
