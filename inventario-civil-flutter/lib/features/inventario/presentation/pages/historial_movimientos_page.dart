@@ -35,7 +35,7 @@ class _HistorialMovimientosPageState extends State<HistorialMovimientosPage> {
     setState(() { _loading = true; _error = null; });
     try {
       final results = await Future.wait([
-        sl<ApiClient>().dio.get('/inventario/movimientos/recientes'),
+        sl<ApiClient>().dio.get('/reportes/movimientos'),
         sl<ApiClient>().dio.get('/materiales'),
       ]);
       final movs = (results[0].data['data'] as List)
@@ -66,7 +66,7 @@ class _HistorialMovimientosPageState extends State<HistorialMovimientosPage> {
         if (_tipoFiltro != 'TODOS' && m['tipo'] != _tipoFiltro) return false;
         // Filtro fecha
         if (_desde != null || _hasta != null) {
-          final fecha = DateTime.parse(m['fechaMovimiento'] as String? ?? '');
+          final fecha = DateTime.parse((m['fechaMovimiento'] ?? m['fecha']) as String? ?? '');
           if (_desde != null && fecha.isBefore(_desde!)) return false;
           if (_hasta != null && fecha.isAfter(_hasta!.add(const Duration(days: 1)))) return false;
         }
@@ -150,7 +150,7 @@ class _HistorialMovimientosPageState extends State<HistorialMovimientosPage> {
                 pw.Padding(padding: const pw.EdgeInsets.all(4),
                     child: pw.Text('${m['stockResultante']}', style: pw.TextStyle(fontSize: 8))),
                 pw.Padding(padding: const pw.EdgeInsets.all(4),
-                    child: pw.Text(_formatFechaCorta(m['fechaMovimiento'] as String? ?? ''),
+                    child: pw.Text(_formatFechaCorta((m['fechaMovimiento'] ?? m['fecha']) as String? ?? ''),
                         style: pw.TextStyle(fontSize: 7, color: PdfColors.grey600))),
               ]);
             }),
@@ -271,7 +271,7 @@ class _HistorialMovimientosPageState extends State<HistorialMovimientosPage> {
         final m = _filtrados[i];
         final esIngreso = m['tipo'] == 'INGRESO';
         final nombre = _nombres[m['materialId'] as int] ?? 'Material #${m['materialId']}';
-        final fecha  = _formatFechaCompleta(m['fechaMovimiento'] as String? ?? '');
+        final fecha  = _formatFechaCompleta((m['fechaMovimiento'] ?? m['fecha']) as String? ?? '');
         return Card(child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(children: [
@@ -312,7 +312,7 @@ class _HistorialMovimientosPageState extends State<HistorialMovimientosPage> {
                     style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
               ]),
               const SizedBox(height: 2),
-              Text(fecha, style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+              Text(_formatFechaCompleta((m['fechaMovimiento'] ?? m['fecha']) as String? ?? ''), style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
             ])),
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Text('${m['stockResultante']}',
