@@ -23,7 +23,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
   Future<void> _cargar() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final res = await sl<ApiClient>().dio.get('/api/v1/categorias');
+      final res = await sl<ApiClient>().dio.get('/categorias');
       setState(() {
         _categorias = (res.data['data'] as List?) ?? [];
         _loading = false;
@@ -58,12 +58,12 @@ class _CategoriasPageState extends State<CategoriasPage> {
               try {
                 final dio = sl<ApiClient>().dio;
                 if (esEdicion) {
-                  await dio.put('/api/v1/categorias/${categoria['id']}', data: {
+                  await dio.put('/categorias/${categoria['id']}', data: {
                     'nombre': nombreCtrl.text,
                     'descripcion': descCtrl.text.isEmpty ? null : descCtrl.text,
                   });
                 } else {
-                  await dio.post('/api/v1/categorias', data: {
+                  await dio.post('/categorias', data: {
                     'nombre': nombreCtrl.text,
                     'descripcion': descCtrl.text.isEmpty ? null : descCtrl.text,
                   });

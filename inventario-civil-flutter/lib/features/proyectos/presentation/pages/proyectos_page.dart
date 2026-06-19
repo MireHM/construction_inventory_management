@@ -23,7 +23,7 @@ class _ProyectosPageState extends State<ProyectosPage> {
   Future<void> _cargar() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final res = await sl<ApiClient>().dio.get('/api/v1/proyectos');
+      final res = await sl<ApiClient>().dio.get('/proyectos');
       setState(() {
         _proyectos = (res.data['data'] as List?) ?? [];
         _loading = false;
@@ -81,14 +81,14 @@ class _ProyectosPageState extends State<ProyectosPage> {
               try {
                 final dio = sl<ApiClient>().dio;
                 if (esEdicion) {
-                  await dio.put('/api/v1/proyectos/${proyecto['id']}', data: {
+                  await dio.put('/proyectos/${proyecto['id']}', data: {
                     'nombre': nombreCtrl.text,
                     'descripcion': descCtrl.text.isEmpty ? null : descCtrl.text,
                     'estado': estado,
                     'presupuesto': presupCtrl.text.isEmpty ? null : double.tryParse(presupCtrl.text),
                   });
                 } else {
-                  await dio.post('/api/v1/proyectos', data: {
+                  await dio.post('/proyectos', data: {
                     'codigo': codigoCtrl.text,
                     'nombre': nombreCtrl.text,
                     'descripcion': descCtrl.text.isEmpty ? null : descCtrl.text,

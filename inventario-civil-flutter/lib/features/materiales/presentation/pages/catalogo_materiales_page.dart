@@ -56,7 +56,7 @@ class _SearchBarState extends State<_SearchBar> {
 
   Future<void> _cargarCategorias() async {
     try {
-      final res = await sl<ApiClient>().dio.get('/api/v1/categorias');
+      final res = await sl<ApiClient>().dio.get('/categorias');
       if (mounted) {
         setState(() {
           _categorias = ((res.data['data'] as List?) ?? [])
@@ -195,8 +195,99 @@ class _MaterialCard extends StatelessWidget {
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text(material.stockActual.toStringAsFixed(0), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: _colorStock(material.estadoStock))),
           const Text('en stock', style: TextStyle(fontSize: 10, color: AppTheme.textSecondary)),
+          PopupMenuButton<String>(
+            iconSize: 18,
+            padding: EdgeInsets.zero,
+            onSelected: (v) {
+              if (v == 'editar')  _mostrarEditar(context);
+              if (v == 'borrar')  _confirmarBorrar(context);
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'editar', child: Row(children: [
+                Icon(Icons.edit_outlined, size: 16), SizedBox(width: 8), Text('Editar'),
+              ])),
+              const PopupMenuItem(value: 'borrar', child: Row(children: [
+                Icon(Icons.delete_outline, size: 16, color: AppTheme.error), SizedBox(width: 8),
+                Text('Desactivar', style: TextStyle(color: AppTheme.error)),
+              ])),
+            ],
+          ),
         ]),
       ]),
+    ));
+  }
+
+  void _mostrarEditar(BuildContext context) {
+    final nombreCtrl = TextEditingController(text: material.nombre);
+    final descCtrl   = TextEditingController(text: material.descripcion ?? '');
+    final precioCtrl = TextEditingController(text: material.precioReferencia.toStringAsFixed(2));
+    final minCtrl    = TextEditingController(text: material.stockMinimo.toStringAsFixed(0));
+    final maxCtrl    = TextEditingController(text: material.stockMaximo?.toStringAsFixed(0) ?? '');
+
+    showDialog(context: context, builder: (ctx) => AlertDialog(
+      title: Text('Editar ${material.nombre}'),
+      content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
+        TextField(controller: nombreCtrl, decoration: const InputDecoration(labelText: 'Nombre *')),
+        const SizedBox(height: 8),
+        TextField(controller: descCtrl, decoration: const InputDecoration(labelText: 'Descripción'), maxLines: 2),
+        const SizedBox(height: 8),
+        TextField(controller: precioCtrl, decoration: const InputDecoration(labelText: 'Precio referencia (Bs.) *'), keyboardType: const TextInputType.numberWithOptions(decimal: true)),
+        const SizedBox(height: 8),
+        TextField(controller: minCtrl, decoration: const InputDecoration(labelText: 'Stock mínimo *'), keyboardType: TextInputType.number),
+        const SizedBox(height: 8),
+        TextField(controller: maxCtrl, decoration: const InputDecoration(labelText: 'Stock máximo (opcional)'), keyboardType: TextInputType.number),
+      ])),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary),
+          onPressed: () async {
+            if (nombreCtrl.text.isEmpty || precioCtrl.text.isEmpty || minCtrl.text.isEmpty) return;
+            try {
+              await sl<ApiClient>().dio.put('/materiales/${material.id}', data: {
+                'codigo': material.codigo,
+                'nombre': nombreCtrl.text,
+                'descripcion': descCtrl.text.isEmpty ? null : descCtrl.text,
+                'categoriaId': material.categoriaId,
+                'unidadMedidaId': material.unidadMedidaId,
+                'precioReferencia': double.tryParse(precioCtrl.text) ?? material.precioReferencia,
+                'stockMinimo': double.tryParse(minCtrl.text) ?? material.stockMinimo,
+                'stockMaximo': maxCtrl.text.isEmpty ? null : double.tryParse(maxCtrl.text),
+              });
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (ctx.mounted) context.read<MaterialBloc>().add(CargarMateriales());
+            } catch (e) {
+              if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.error));
+            }
+          },
+          child: const Text('Guardar', style: TextStyle(color: Colors.white)),
+        ),
+      ],
+    ));
+  }
+
+  void _confirmarBorrar(BuildContext context) {
+    showDialog(context: context, builder: (ctx) => AlertDialog(
+      title: const Text('Desactivar material'),
+      content: Text('¿Desactivar "${material.nombre}"? Ya no aparecerá en el catálogo activo.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error),
+          onPressed: () async {
+            try {
+              await sl<ApiClient>().dio.delete('/materiales/${material.id}');
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (ctx.mounted) context.read<MaterialBloc>().add(CargarMateriales());
+            } catch (e) {
+              if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.error));
+            }
+          },
+          child: const Text('Desactivar', style: TextStyle(color: Colors.white)),
+        ),
+      ],
     ));
   }
 

@@ -23,7 +23,7 @@ class _UnidadesMedidaPageState extends State<UnidadesMedidaPage> {
   Future<void> _cargar() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final res = await sl<ApiClient>().dio.get('/api/v1/unidades-medida');
+      final res = await sl<ApiClient>().dio.get('/unidades-medida');
       setState(() {
         _unidades = (res.data['data'] as List?) ?? [];
         _loading = false;
@@ -59,13 +59,13 @@ class _UnidadesMedidaPageState extends State<UnidadesMedidaPage> {
               try {
                 final dio = sl<ApiClient>().dio;
                 if (esEdicion) {
-                  await dio.put('/api/v1/unidades-medida/${unidad['id']}', data: {
+                  await dio.put('/unidades-medida/${unidad['id']}', data: {
                     'nombre': nombreCtrl.text,
                     'simbolo': unidad['simbolo'],
                   });
                 } else {
                   if (simboloCtrl.text.isEmpty) return;
-                  await dio.post('/api/v1/unidades-medida', data: {
+                  await dio.post('/unidades-medida', data: {
                     'simbolo': simboloCtrl.text,
                     'nombre': nombreCtrl.text,
                   });

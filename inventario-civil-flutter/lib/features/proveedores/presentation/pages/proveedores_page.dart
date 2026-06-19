@@ -23,7 +23,7 @@ class _ProveedoresPageState extends State<ProveedoresPage> {
   Future<void> _cargar() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final res = await sl<ApiClient>().dio.get('/api/v1/proveedores');
+      final res = await sl<ApiClient>().dio.get('/proveedores');
       setState(() {
         _proveedores = (res.data['data'] as List?) ?? [];
         _loading = false;
@@ -78,7 +78,7 @@ class _ProveedoresPageState extends State<ProveedoresPage> {
               try {
                 final dio = sl<ApiClient>().dio;
                 if (esEdicion) {
-                  await dio.put('/api/v1/proveedores/${proveedor['id']}', data: {
+                  await dio.put('/proveedores/${proveedor['id']}', data: {
                     'nombre':   nombreCtrl.text,
                     'telefono': telefonoCtrl.text.isEmpty ? null : telefonoCtrl.text,
                     'email':    emailCtrl.text.isEmpty ? null : emailCtrl.text,
@@ -86,7 +86,7 @@ class _ProveedoresPageState extends State<ProveedoresPage> {
                     'contacto': contactoCtrl.text.isEmpty ? null : contactoCtrl.text,
                   });
                 } else {
-                  await dio.post('/api/v1/proveedores', data: {
+                  await dio.post('/proveedores', data: {
                     'nombre':   nombreCtrl.text,
                     'nit':      nitCtrl.text.isEmpty ? null : nitCtrl.text,
                     'telefono': telefonoCtrl.text.isEmpty ? null : telefonoCtrl.text,
