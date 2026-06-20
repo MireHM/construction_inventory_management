@@ -48,29 +48,29 @@ BEGIN
     INSERT INTO movimientos_inventario
       (material_id, proyecto_id, tipo, cantidad, precio_unitario,
        proveedor_id, numero_factura, responsable_id,
-       stock_anterior, stock_resultante, fecha_movimiento)
+       stock_anterior, stock_resultante, fecha_movimiento, created_at)
     VALUES
-      (v_mat1_id, v_proj1_id,'INGRESO', 200, 55.00, v_prov1_id,'FACT-2026-001', v_admin_id,    0,  200, NOW()-INTERVAL '60 days'),
-      (v_mat2_id, v_proj1_id,'INGRESO',  50,120.00, v_prov1_id,'FACT-2026-001', v_admin_id,    0,   50, NOW()-INTERVAL '60 days'),
-      (v_mat3_id, v_proj1_id,'INGRESO',  50, 90.00, v_prov1_id,'FACT-2026-001', v_admin_id,    0,   50, NOW()-INTERVAL '60 days'),
-      (v_mat5_id, v_proj1_id,'INGRESO', 100, 68.00, v_prov2_id,'FACT-2026-002', v_admin_id,    0,  100, NOW()-INTERVAL '55 days'),
-      (v_mat6_id, v_proj1_id,'INGRESO', 150, 32.00, v_prov2_id,'FACT-2026-002', v_admin_id,    0,  150, NOW()-INTERVAL '55 days'),
-      (v_mat7_id, v_proj1_id,'INGRESO',3000,  1.20, v_prov3_id,'FACT-2026-003', v_admin_id,    0, 3000, NOW()-INTERVAL '50 days'),
-      (v_mat9_id, v_proj1_id,'INGRESO',  60, 35.00, v_prov1_id,'FACT-2026-004', v_admin_id,    0,   60, NOW()-INTERVAL '45 days');
+      (v_mat1_id, v_proj1_id,'INGRESO', 200, 55.00, v_prov1_id,'FACT-2026-001', v_admin_id,    0,  200, NOW()-INTERVAL '60 days', NOW()-INTERVAL '60 days'),
+      (v_mat2_id, v_proj1_id,'INGRESO',  50,120.00, v_prov1_id,'FACT-2026-001', v_admin_id,    0,   50, NOW()-INTERVAL '60 days', NOW()-INTERVAL '60 days'),
+      (v_mat3_id, v_proj1_id,'INGRESO',  50, 90.00, v_prov1_id,'FACT-2026-001', v_admin_id,    0,   50, NOW()-INTERVAL '60 days', NOW()-INTERVAL '60 days'),
+      (v_mat5_id, v_proj1_id,'INGRESO', 100, 68.00, v_prov2_id,'FACT-2026-002', v_admin_id,    0,  100, NOW()-INTERVAL '55 days', NOW()-INTERVAL '55 days'),
+      (v_mat6_id, v_proj1_id,'INGRESO', 150, 32.00, v_prov2_id,'FACT-2026-002', v_admin_id,    0,  150, NOW()-INTERVAL '55 days', NOW()-INTERVAL '55 days'),
+      (v_mat7_id, v_proj1_id,'INGRESO',3000,  1.20, v_prov3_id,'FACT-2026-003', v_admin_id,    0, 3000, NOW()-INTERVAL '50 days', NOW()-INTERVAL '50 days'),
+      (v_mat9_id, v_proj1_id,'INGRESO',  60, 35.00, v_prov1_id,'FACT-2026-004', v_admin_id,    0,   60, NOW()-INTERVAL '45 days', NOW()-INTERVAL '45 days');
 
     -- Salidas por avance de obra (hace 45-10 días)
     INSERT INTO movimientos_inventario
       (material_id, proyecto_id, tipo, cantidad, responsable_id,
-       stock_anterior, stock_resultante, motivo, fecha_movimiento)
+       stock_anterior, stock_resultante, motivo, fecha_movimiento, created_at)
     VALUES
-      (v_mat1_id, v_proj1_id,'SALIDA',  80, v_admin_id, 200, 120,'Hormigón cimentación bloque A',       NOW()-INTERVAL '45 days'),
-      (v_mat2_id, v_proj1_id,'SALIDA',  20, v_admin_id,  50,  30,'Mortero paredes nivel 1',              NOW()-INTERVAL '40 days'),
-      (v_mat5_id, v_proj1_id,'SALIDA',  60, v_admin_id, 100,  40,'Armado columnas sótano',               NOW()-INTERVAL '35 days'),
-      (v_mat6_id, v_proj1_id,'SALIDA',  90, v_admin_id, 150,  60,'Losas nivel 1 y 2',                   NOW()-INTERVAL '30 days'),
-      (v_mat7_id, v_proj1_id,'SALIDA',1200, v_admin_id,3000,1800,'Muros divisorios nivel 1 y 2',        NOW()-INTERVAL '25 days'),
-      (v_mat1_id, v_proj1_id,'SALIDA',  75, v_admin_id, 120,  45,'Hormigón armado columnas nivel 2',    NOW()-INTERVAL '20 days'),
-      (v_mat9_id, v_proj1_id,'SALIDA',  45, v_admin_id,  60,  15,'Primera mano pintura exterior',       NOW()-INTERVAL '15 days'),
-      (v_mat3_id, v_proj1_id,'SALIDA',  25, v_admin_id,  50,   5,'Subbase piso planta baja',            NOW()-INTERVAL '10 days');
+      (v_mat1_id, v_proj1_id,'SALIDA',  80, v_admin_id, 200, 120,'Hormigón cimentación bloque A',       NOW()-INTERVAL '45 days', NOW()-INTERVAL '45 days'),
+      (v_mat2_id, v_proj1_id,'SALIDA',  20, v_admin_id,  50,  30,'Mortero paredes nivel 1',              NOW()-INTERVAL '40 days', NOW()-INTERVAL '40 days'),
+      (v_mat5_id, v_proj1_id,'SALIDA',  60, v_admin_id, 100,  40,'Armado columnas sótano',               NOW()-INTERVAL '35 days', NOW()-INTERVAL '35 days'),
+      (v_mat6_id, v_proj1_id,'SALIDA',  90, v_admin_id, 150,  60,'Losas nivel 1 y 2',                   NOW()-INTERVAL '30 days', NOW()-INTERVAL '30 days'),
+      (v_mat7_id, v_proj1_id,'SALIDA',1200, v_admin_id,3000,1800,'Muros divisorios nivel 1 y 2',        NOW()-INTERVAL '25 days', NOW()-INTERVAL '25 days'),
+      (v_mat1_id, v_proj1_id,'SALIDA',  75, v_admin_id, 120,  45,'Hormigón armado columnas nivel 2',    NOW()-INTERVAL '20 days', NOW()-INTERVAL '20 days'),
+      (v_mat9_id, v_proj1_id,'SALIDA',  45, v_admin_id,  60,  15,'Primera mano pintura exterior',       NOW()-INTERVAL '15 days', NOW()-INTERVAL '15 days'),
+      (v_mat3_id, v_proj1_id,'SALIDA',  25, v_admin_id,  50,   5,'Subbase piso planta baja',            NOW()-INTERVAL '10 days', NOW()-INTERVAL '10 days');
 
     -- Actualizar stock final en materiales
     UPDATE materiales SET stock_actual =   45, updated_at = NOW() WHERE codigo = 'MAT-001'; -- bajo mínimo (50)
