@@ -92,35 +92,35 @@ BEGIN
     -- Ingresos para PROY-002 (puente)
     INSERT INTO movimientos_inventario
       (material_id, proyecto_id, tipo, cantidad, precio_unitario,
-       proveedor_id, numero_factura, responsable_id, stock_anterior, stock_resultante, fecha_movimiento)
+       proveedor_id, numero_factura, responsable_id, stock_anterior, stock_resultante, fecha_movimiento, created_at)
     VALUES
-      (v_mat4_id,  v_proj2_id,'INGRESO', 40,  75.00, v_prov2_id,'FACT-2026-005', v_admin_id, 30, 70,  NOW()-INTERVAL '30 days'),
-      (v_mat5_id,  v_proj2_id,'INGRESO', 60,  68.00, v_prov2_id,'FACT-2026-005', v_admin_id, 40, 100, NOW()-INTERVAL '30 days'),
-      (v_mat10_id, v_proj2_id,'INGRESO',200,   2.10, v_prov3_id,'FACT-2026-006', v_admin_id,600, 800, NOW()-INTERVAL '25 days');
+      (v_mat4_id,  v_proj2_id,'INGRESO', 40,  75.00, v_prov2_id,'FACT-2026-005', v_admin_id, 30, 70,  NOW()-INTERVAL '30 days', NOW()-INTERVAL '30 days'),
+      (v_mat5_id,  v_proj2_id,'INGRESO', 60,  68.00, v_prov2_id,'FACT-2026-005', v_admin_id, 40, 100, NOW()-INTERVAL '30 days', NOW()-INTERVAL '30 days'),
+      (v_mat10_id, v_proj2_id,'INGRESO',200,   2.10, v_prov3_id,'FACT-2026-006', v_admin_id,600, 800, NOW()-INTERVAL '25 days', NOW()-INTERVAL '25 days');
 
     -- Salidas PROY-002
     INSERT INTO movimientos_inventario
       (material_id, proyecto_id, tipo, cantidad, responsable_id,
-       stock_anterior, stock_resultante, motivo, fecha_movimiento)
+       stock_anterior, stock_resultante, motivo, fecha_movimiento, created_at)
     VALUES
-      (v_mat5_id,  v_proj2_id,'SALIDA', 30, v_admin_id, 100, 70,'Armado tablero puente tramo 1',    NOW()-INTERVAL '20 days'),
-      (v_mat10_id, v_proj2_id,'SALIDA',100, v_admin_id, 800,700,'Encofrado estribos laterales',     NOW()-INTERVAL '15 days');
+      (v_mat5_id,  v_proj2_id,'SALIDA', 30, v_admin_id, 100, 70,'Armado tablero puente tramo 1',    NOW()-INTERVAL '20 days', NOW()-INTERVAL '20 days'),
+      (v_mat10_id, v_proj2_id,'SALIDA',100, v_admin_id, 800,700,'Encofrado estribos laterales',     NOW()-INTERVAL '15 days', NOW()-INTERVAL '15 days');
 
     -- Ingresos PROY-003 (residencia)
     INSERT INTO movimientos_inventario
       (material_id, proyecto_id, tipo, cantidad, precio_unitario,
-       proveedor_id, numero_factura, responsable_id, stock_anterior, stock_resultante, fecha_movimiento)
+       proveedor_id, numero_factura, responsable_id, stock_anterior, stock_resultante, fecha_movimiento, created_at)
     VALUES
-      (v_mat8_id,  v_proj3_id,'INGRESO', 20, 120.00, v_prov3_id,'FACT-2026-007', v_admin_id, 30, 50, NOW()-INTERVAL '15 days'),
-      (v_mat1_id,  v_proj3_id,'INGRESO',100,  55.00, v_prov2_id,'FACT-2026-007', v_admin_id, 45,145, NOW()-INTERVAL '15 days');
+      (v_mat8_id,  v_proj3_id,'INGRESO', 20, 120.00, v_prov3_id,'FACT-2026-007', v_admin_id, 30, 50, NOW()-INTERVAL '15 days', NOW()-INTERVAL '15 days'),
+      (v_mat1_id,  v_proj3_id,'INGRESO',100,  55.00, v_prov2_id,'FACT-2026-007', v_admin_id, 45,145, NOW()-INTERVAL '15 days', NOW()-INTERVAL '15 days');
 
     -- Salidas PROY-003
     INSERT INTO movimientos_inventario
       (material_id, proyecto_id, tipo, cantidad, responsable_id,
-       stock_anterior, stock_resultante, motivo, fecha_movimiento)
+       stock_anterior, stock_resultante, motivo, fecha_movimiento, created_at)
     VALUES
-      (v_mat8_id,  v_proj3_id,'SALIDA', 10, v_admin_id,  50, 40,'Instalación sanitaria piso 1',    NOW()-INTERVAL '5 days'),
-      (v_mat1_id,  v_proj3_id,'SALIDA', 30, v_admin_id, 145,115,'Contrapiso habitaciones nivel 1', NOW()-INTERVAL '3 days');
+      (v_mat8_id,  v_proj3_id,'SALIDA', 10, v_admin_id,  50, 40,'Instalación sanitaria piso 1',    NOW()-INTERVAL '5 days', NOW()-INTERVAL '5 days'),
+      (v_mat1_id,  v_proj3_id,'SALIDA', 30, v_admin_id, 145,115,'Contrapiso habitaciones nivel 1', NOW()-INTERVAL '3 days', NOW()-INTERVAL '3 days');
 
     -- Actualizar stocks finales tras todos los movimientos
     UPDATE materiales SET stock_actual =  70, updated_at = NOW() WHERE codigo = 'MAT-004';
