@@ -143,14 +143,20 @@ BEGIN
       NOW()-INTERVAL '5 days', NOW()-INTERVAL '4 days'
     ) RETURNING id INTO v_proforma3;
 
-    INSERT INTO partidas_proforma (proforma_id, apu_id, cantidad, created_at) VALUES
-      (v_proforma3, v_apu1_id, 18.0, NOW()-INTERVAL '5 days');
+    -- cantidad_obra (no "cantidad"), sin created_at — igual que V5
+    INSERT INTO partidas_proforma (proforma_id, apu_id, cantidad_obra, orden) VALUES
+      (v_proforma3, v_apu1_id, 18.0, 1);
 
-    INSERT INTO requerimientos (proforma_id, material_id, cantidad, created_at)
-    VALUES (v_proforma3, v_mat1_id, 140.40, NOW()-INTERVAL '4 days');
+    -- requerimientos con columnas reales del entity
+    INSERT INTO requerimientos
+      (proforma_id, material_id, cantidad_calculada, cantidad_disponible, cantidad_a_comprar,
+       solicitado_por, fecha_calculo)
+    VALUES (v_proforma3, v_mat1_id, 140.40, 115.00, 25.40, v_admin_id, NOW()-INTERVAL '4 days');
 
-    INSERT INTO requerimientos (proforma_id, material_id, cantidad, created_at)
-    VALUES (v_proforma3, v_mat4_id,  11.70, NOW()-INTERVAL '4 days');
+    INSERT INTO requerimientos
+      (proforma_id, material_id, cantidad_calculada, cantidad_disponible, cantidad_a_comprar,
+       solicitado_por, fecha_calculo)
+    VALUES (v_proforma3, v_mat4_id, 11.70, 70.00, 0, v_admin_id, NOW()-INTERVAL '4 days');
   END IF;
 
 END $$;
